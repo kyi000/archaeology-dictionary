@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+  <title>한국고고학사전</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- 메인 헤더 -->
+    <header class="app-header">
+      <div class="header-left">
+        <img src="../assets/logo.png" alt="로고" class="logo">
+        <h1>한국고고학사전</h1>
+      </div>
+      <div class="header-right">
+        <div class="search-container">
+          <input type="text" id="searchInput" placeholder="용어 또는 유적을 검색하세요...">
+          <button id="searchButton">검색</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <div class="main-content">
+      <!-- 사이드바 -->
+      <aside class="sidebar">
+        <nav class="main-nav">
+          <ul>
+            <li><a href="#" class="nav-item active" data-view="home">홈</a></li>
+            <li><a href="#" class="nav-item" data-view="dictionary">사전</a></li>
+            <li><a href="#" class="nav-item" data-view="categories">카테고리</a></li>
+            <li><a href="#" class="nav-item" data-view="bookmarks">북마크</a></li>
+            <li><a href="#" class="nav-item" data-view="recents">최근 조회</a></li>
+            <li><a href="#" class="nav-item" data-view="settings">설정</a></li>
+          </ul>
+        </nav>
+
+        <div class="category-list" id="categoryList">
+          <h3>사전 구분</h3>
+          <ul id="dictionaryTypeList">
+            <!-- 카테고리 목록이 동적으로 추가됩니다 -->
+            <li class="loading">카테고리 로딩 중...</li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- 콘텐츠 영역 -->
+      <main class="content" id="mainContent">
+        <!-- 홈 화면 -->
+        <section class="view active" id="homeView">
+          <h2>한국고고학사전에 오신 것을 환영합니다</h2>
+          
+          <div class="welcome-message">
+            <p>이 프로그램은 문화재청 매장문화재 포털에서 제공하는 한국고고학사전 데이터를 활용한 오프라인 검색 애플리케이션입니다.</p>
+            <p>상단의 검색창을 통해 원하는 용어나 유적을 검색하거나, 좌측 메뉴에서 카테고리별로 탐색할 수 있습니다.</p>
+          </div>
+          
+          <div class="status-panel" id="statusPanel">
+            <h3>데이터 상태</h3>
+            <p id="dataStatus">데이터 확인 중...</p>
+            <button id="updateDataButton" class="primary-button">데이터 업데이트</button>
+          </div>
+          
+          <div class="quick-stats">
+            <div class="stat-box">
+              <h4>총 항목</h4>
+              <p id="totalItemsCount">로딩 중...</p>
+            </div>
+            <div class="stat-box">
+              <h4>북마크</h4>
+              <p id="bookmarksCount">로딩 중...</p>
+            </div>
+            <div class="stat-box">
+              <h4>최근 조회</h4>
+              <p id="recentsCount">로딩 중...</p>
+            </div>
+          </div>
+          
+          <div class="recent-items-panel">
+            <h3>최근 조회 항목</h3>
+            <ul id="recentItemsList">
+              <!-- 최근 조회 항목이 동적으로 추가됩니다 -->
+              <li class="loading">로딩 중...</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 사전 화면 -->
+        <section class="view" id="dictionaryView">
+          <h2>고고학사전 전체 목록</h2>
+          
+          <div class="filter-panel">
+            <select id="typeFilter">
+              <option value="">모든 유형</option>
+              <option value="1">유적</option>
+              <option value="2">용어</option>
+            </select>
+            
+            <select id="categoryFilter">
+              <option value="">모든 카테고리</option>
+              <!-- 카테고리 옵션이 동적으로 추가됩니다 -->
+            </select>
+            
+            <div class="sort-options">
+              <label>정렬: </label>
+              <select id="sortOption">
+                <option value="name">이름순</option>
+                <option value="recent">최근 조회순</option>
+                <option value="count">조회수순</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="items-container">
+            <div id="itemsList" class="items-list">
+              <!-- 항목 목록이 동적으로 추가됩니다 -->
+              <p class="loading">항목 로딩 중...</p>
+            </div>
+            
+            <div class="pagination">
+              <button id="prevPageBtn" disabled>&lt; 이전</button>
+              <span id="pageInfo">페이지 1</span>
+              <button id="nextPageBtn">다음 &gt;</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 카테고리 화면 -->
+        <section class="view" id="categoriesView">
+          <h2>카테고리별 탐색</h2>
+          
+          <div class="categories-grid" id="categoriesGrid">
+            <!-- 카테고리 목록이 동적으로 추가됩니다 -->
+            <p class="loading">카테고리 로딩 중...</p>
+          </div>
+        </section>
+
+        <!-- 북마크 화면 -->
+        <section class="view" id="bookmarksView">
+          <h2>북마크</h2>
+          
+          <div class="bookmarks-container">
+            <div id="bookmarksList" class="items-list">
+              <!-- 북마크 항목이 동적으로 추가됩니다 -->
+              <p class="loading">북마크 로딩 중...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 최근 조회 화면 -->
+        <section class="view" id="recentsView">
+          <h2>최근 조회 항목</h2>
+          
+          <div class="recents-container">
+            <div id="recentsList" class="items-list">
+              <!-- 최근 조회 항목이 동적으로 추가됩니다 -->
+              <p class="loading">항목 로딩 중...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 설정 화면 -->
+        <section class="view" id="settingsView">
+          <h2>설정</h2>
+          
+          <div class="settings-container">
+            <div class="settings-group">
+              <h3>데이터 관리</h3>
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>데이터 업데이트</h4>
+                  <p>문화재청 API에서 최신 고고학사전 데이터를 다운로드합니다.</p>
+                </div>
+                <button id="settingsUpdateButton" class="secondary-button">업데이트</button>
+              </div>
+              
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>데이터 초기화</h4>
+                  <p>모든 데이터를 삭제하고 초기 상태로 되돌립니다. 이 작업은 되돌릴 수 없습니다.</p>
+                </div>
+                <button id="resetDataButton" class="danger-button">초기화</button>
+              </div>
+              
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>데이터 내보내기</h4>
+                  <p>사전 데이터를 JSON 파일로 내보냅니다.</p>
+                </div>
+                <button id="exportDataButton" class="secondary-button">내보내기</button>
+              </div>
+            </div>
+            
+            <div class="settings-group">
+              <h3>표시 설정</h3>
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>글꼴 크기</h4>
+                  <p>애플리케이션의 기본 글꼴 크기를 조정합니다.</p>
+                </div>
+                <div class="setting-control">
+                  <select id="fontSizeOption">
+                    <option value="small">작게</option>
+                    <option value="medium" selected>보통</option>
+                    <option value="large">크게</option>
+                    <option value="x-large">매우 크게</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>테마</h4>
+                  <p>애플리케이션의 색상 테마를 변경합니다.</p>
+                </div>
+                <div class="setting-control">
+                  <select id="themeOption">
+                    <option value="light" selected>라이트 모드</option>
+                    <option value="dark">다크 모드</option>
+                    <option value="sepia">세피아 모드</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="settings-group">
+              <h3>정보</h3>
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>버전</h4>
+                  <p id="versionInfo">버전 정보 로딩 중...</p>
+                </div>
+                <button id="checkUpdateButton" class="secondary-button">업데이트 확인</button>
+              </div>
+              
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>오픈소스 라이선스</h4>
+                  <p>이 애플리케이션에서 사용된 오픈소스 라이브러리 정보</p>
+                </div>
+                <button id="licensesButton" class="secondary-button">라이선스 보기</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- 상세 정보 모달 -->
+  <div id="itemDetailModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <div id="itemDetailContent">
+        <!-- 항목 상세 정보가 동적으로 추가됩니다 -->
+        <div class="loading">항목 정보 로딩 중...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 업데이트 진행 모달 -->
+  <div id="updateProgressModal" class="modal">
+    <div class="modal-content">
+      <h2>데이터 업데이트 중</h2>
+      <div class="progress-container">
+        <div id="updateProgressBar" class="progress-bar">
+          <div class="progress-bar-fill" style="width: 0%"></div>
+        </div>
+        <p id="updateProgressText">준비 중...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 스크립트 -->
+  <script src="scripts/app.js"></script>
+  <script src="scripts/ui-controller.js"></script>
+  <script src="scripts/data-controller.js"></script>
+</body>
+</html>
